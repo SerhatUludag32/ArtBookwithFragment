@@ -124,6 +124,29 @@ class SaveFragment : Fragment() {
         val artName = binding.artNameText.text.toString()
         val artistName = binding.artistNameText.text.toString()
         val year = binding.yearText.text.toString()
+
+        if (artName.isBlank()) {
+            binding.artNameText.error = "Art name is required"
+            return
+        }
+
+        if (artistName.isBlank()) {
+            binding.artistNameText.error = "Artist name is required"
+            return
+        }
+
+        if (year.isBlank()) {
+            binding.yearText.error = "Year is required"
+            return
+        }
+
+        // Check if the year is a valid integer
+        val yearInt = year.toIntOrNull()
+        if (yearInt == null) {
+            binding.yearText.error = "Invalid year"
+            return
+        }
+
         if (selectedBitmap != null){
             val smallBitmap = makeSmallerBitmap(selectedBitmap!!, 300)
 
@@ -135,6 +158,8 @@ class SaveFragment : Fragment() {
             val art = Art(artName,artistName,year,byteArray)
 
             mDisposable.add(artDao.insert(art).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(this::handleResponse))
+        }else{
+            Toast.makeText(requireContext(), "Please select an image", Toast.LENGTH_LONG).show()
         }
     }
 
